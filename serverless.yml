@@ -1,0 +1,74 @@
+service: covid19server
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  domains:
+    prod: api.covid19app.org
+    dev: api.tmp.covid19app.org
+  customDomain:
+    domainName: ${self:custom.domains.${self:custom.stage}}
+    # domainName: api.tmp.covid19app.org
+    basePath: ''
+    stage: ${self:custom.stage}
+    createRoute53Record: true
+#    certificateName: tmp.covid19app.org
+#    endpointType: regional # Without 'regional' the certificate has to be in us-east-1 region!!!
+    enabled: true
+
+provider:
+  name: aws
+#  stage: dev
+  region: us-east-2
+  runtime: nodejs12.x
+  memorySize: 256
+  timeout: 5
+  environment:
+    COVID19SERVER_STAGE: ${self:custom.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: 'arn:aws:dynamodb:*:*:table/*-${self:custom.stage}'
+    - Effect: Allow
+      Action:
+        - firehose:GetRecords
+        - firehose:GetShardIterator
+        - firehose:PutRecord
+        - firehose:PutRecords
+        - firehose:DescribeStream
+        - firehose:ListStreams
+        # - firehose:*
+      # Resource: "*"
+      Resource: 'arn:aws:firehose:*:*:deliverystream/*'
+
+plugins:
+  - serverless-domain-manager
+  - serverless-offline
+  - serverless-pseudo-parameters
+
+package:
+  exclude:
+    - .git/**
+    - src/**
+    - test/**
+    - e2e/**
+    - nodemon.json
+    - README.md
+
+functions:
+  index:
+    handler: dist/index.handler
+    events:
+      - http:
+          cors: true
+          path: '/'
+          method: any
+      - http:
+          cors: true
+          path: '{proxy+}'
+          method: any
