@@ -1,13 +1,15 @@
 import { Body, Controller, Get, HttpStatus, Param, Post, Req, Res } from '@nestjs/common';
+import { CountryService } from './country.service';
 import { DynamoDbService } from './dynamodb.service';
 import { FirehoseService } from './firehose.service';
-import { DeviceEntity, DeviceNotificationEvent, LabResult, NextSteps,
+import { DeviceEntity, DeviceNotificationEvent, ExperimentalEventInfo, LabResult, NextSteps,
   PersonEntity, PersonProfileEvent, PersonSymptomsEvent, PersonTravelHistoryEvent,
   RegistrationStatus, TestEntity, TestPairEvent, TestResultEvent} from './schema';
 
 @Controller()
 export class EventsController {
   constructor(
+    private readonly countryService: CountryService,
     private readonly dynamoDbService: DynamoDbService,
     private readonly firehoseService: FirehoseService,
   ) {}
@@ -55,21 +57,10 @@ export class EventsController {
 
   @Post('/v1/person/:personId/symptoms')
   async postPersonSymptoms(@Param('personId') personId: string,
-      @Body() personSymptomsEvent: PersonSymptomsEvent): Promise<NextSteps> {
+      @Body() personSymptomsEvent: PersonSymptomsEvent & ExperimentalEventInfo): Promise<NextSteps> {
     // assert(personId == personSymptomsEvent.personId)
     this.firehoseService.publish('person_symptoms_event', personSymptomsEvent)
-    if (personSymptomsEvent.feverInCelsius > 37.5) {
-      const externalLink = 'https://www.google.com/maps/search/?api=1&query=hospital'
-      return {
-        html: `<a style=\"font-size: 40px;\" href=\"$externalLink\">Go to the nearest lab please!</a>`,
-        externalLink,
-        externalLinkTitle: 'Go to Lab!',
-      }
-    } else {
-      return {
-        text: 'There is no reason to be worried. Go on with your life. But please be careful!',
-      }
-    }
+    return this.countryService.decideNextSteps(personSymptomsEvent)
   }
 
 

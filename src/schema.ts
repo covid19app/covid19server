@@ -42,6 +42,12 @@ export interface EventInfo {
   // s2Cell?: string
 }
 
+export interface ExperimentalEventInfo {
+  locale: string
+  latitude?: number
+  longtitude?: number
+}
+
 export interface Event {
   eventInfo?: EventInfo
 }
