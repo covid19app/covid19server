@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpStatus, Param, Post, Req, Res } from '@nestjs/common';
 import { DynamoDbService } from './dynamodb.service';
 import { FirehoseService } from './firehose.service';
-import { Action, DeviceEntity, DeviceNotificationEvent, LabResult, NextSteps,
+import { DeviceEntity, DeviceNotificationEvent, LabResult, NextSteps,
   PersonEntity, PersonProfileEvent, PersonSymptomsEvent, PersonTravelHistoryEvent,
   RegistrationStatus, TestEntity, TestPairEvent, TestResultEvent} from './schema';
 
@@ -10,7 +10,7 @@ export class EventsController {
   constructor(
     private readonly dynamoDbService: DynamoDbService,
     private readonly firehoseService: FirehoseService,
-    ) {}
+  ) {}
 
   @Get('/v1/device/:deviceId')
   async getDevice(@Param('deviceId') deviceId: string): Promise<RegistrationStatus> {
@@ -60,14 +60,15 @@ export class EventsController {
     this.firehoseService.publish('person_symptoms_event', personSymptomsEvent)
     if (personSymptomsEvent.feverInCelsius > 37.5) {
       const externalLink = 'https://www.google.com/maps/search/?api=1&query=hospital'
-      const html = `<a style=\"font-size: 40px;\" href=\"$externalLink\">Go to nearest lab please!</a>`
-      const nextSteps: NextSteps = { action: Action[Action.GET_TESTED], html, externalLink }
-      return nextSteps
+      return {
+        html: `<a style=\"font-size: 40px;\" href=\"$externalLink\">Go to the nearest lab please!</a>`,
+        externalLink,
+        externalLinkTitle: 'Go to Lab!',
+      }
     } else {
-      const text = 'There is no reason to be worried. Go on with your life. But please be careful!'
-      const html = `<p style=\"font-size: 40px;\">${text}</p>`
-      const nextSteps: NextSteps = { action: Action[Action.STAY_HEALTHY], html, externalLink: null }
-      return nextSteps
+      return {
+        text: 'There is no reason to be worried. Go on with your life. But please be careful!',
+      }
     }
   }
 
@@ -101,7 +102,7 @@ export class EventsController {
     await Promise.all([
       this.dynamoDbService.put('test_entity', updatedTestEntity),
       // TODO: publish every event even on any errors
-      this.firehoseService.publish('test_result_event', testResultEvent)
+      this.firehoseService.publish('test_result_event', testResultEvent),
     ])
     return '"OK"'
   }

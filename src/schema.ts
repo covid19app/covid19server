@@ -26,9 +26,11 @@ export type ActionStrings = keyof typeof Action
 
 export interface NextSteps {
   // action: Action
-  action: string
+  // action: string
+  text?: string
   html?: string
   externalLink?: string
+  externalLinkTitle?: string
 }
 
 // Events
@@ -54,7 +56,8 @@ export interface PersonProfileEvent extends Event {
   name?: string
   age?: number
   sex?: Sex
-  deleted: boolean
+  locale?: string
+  deactivated?: boolean
 }
 
 export interface PersonTravelHistoryEvent extends Event {
@@ -99,6 +102,7 @@ export interface TestResultEvent extends Event {
 export interface DeviceEntity {
   deviceId: string
   pushNotificationToken?: string
+  defaultPersonId?: string
 }
 
 export interface PersonEntity {
@@ -107,7 +111,8 @@ export interface PersonEntity {
   age?: number
   sex?: Sex
   name?: string
-  deleted: boolean
+  locale?: string
+  deactivated?: boolean
 }
 
 export interface TestEntity {

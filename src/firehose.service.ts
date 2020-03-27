@@ -3,7 +3,7 @@ import * as Firehose from 'aws-sdk/clients/firehose';
 
 @Injectable()
 export class FirehoseService {
-  firehose = new Firehose()
+  private firehose = new Firehose()
 
   async publish(streamName: string, record: any) {
     const params = {
