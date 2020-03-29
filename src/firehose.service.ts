@@ -5,7 +5,7 @@ import * as Firehose from 'aws-sdk/clients/firehose';
 export class FirehoseService {
   private firehose = new Firehose()
 
-  async publish(streamName: string, record: any) {
+  async publish(streamName: string, record: any): Promise<void> {
     const params = {
       DeliveryStreamName: streamName,
       Record: {

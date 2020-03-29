@@ -1,13 +1,13 @@
-import { Body, Controller, Get, HttpStatus, Param, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { CountryService } from './country.service';
 import { DynamoDbService } from './dynamodb.service';
 import { FirehoseService } from './firehose.service';
 import { DeviceEntity, DeviceNotificationEvent, ExperimentalEventInfo, LabResult, NextSteps,
   PersonEntity, PersonProfileEvent, PersonSymptomsEvent, PersonTravelHistoryEvent,
-  RegistrationStatus, TestEntity, TestPairEvent, TestResultEvent} from './schema';
+  RegistrationStatus, TestEntity, TestPairEvent, TestResultEvent } from './schema';
 
 @Controller()
-export class EventsController {
+export class ApiController {
   constructor(
     private readonly countryService: CountryService,
     private readonly dynamoDbService: DynamoDbService,

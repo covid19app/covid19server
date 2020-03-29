@@ -13,11 +13,11 @@ export class DynamoDbService {
     return await this.dynamoDb.get(params).promise().then(result => result.Item as T)
   }
 
-  async put<T>(typeNameOfT: string, item: DynamoDB.DocumentClient.PutItemInputAttributeMap) {
+  async put<T>(typeNameOfT: string, item: DynamoDB.DocumentClient.PutItemInputAttributeMap): Promise<void> {
     const params = {
       TableName: `${typeNameOfT}-${process.env.COVID19SERVER_STAGE}`,
       Item: { ...item, eventInfo: undefined }, // TODO: solve this cleanly
     }
-    return await this.dynamoDb.put(params).promise()
+    await this.dynamoDb.put(params).promise()
   }
 }
