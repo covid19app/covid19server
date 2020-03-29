@@ -95,7 +95,7 @@ export class ApiController {
     const publishEventPromise = this.eventService.publish('test_result_event', testResultEvent)
     const testEntity = await this.keyValueService.get<TestEntity>('test_entity', testId)
     if (!testEntity) {
-      return '"ERROR: testId = $testId not is not paired yet. Please scan again."'
+      return `"ERROR: TestKit is not paired yet. Don't worry we have saved the result anyway."`
     }
     const updatedTestEntity: TestEntity = {...testEntity, ...testResultEvent}
     await Promise.all([

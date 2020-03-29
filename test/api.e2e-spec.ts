@@ -3,11 +3,10 @@ import * as request from 'supertest';
 
 import { ApiModule } from '../src/api.module';
 import { EventService } from '../src/event';
-import { TestEventService } from '../src/event.test_service';
 import { freshEventInfo, freshId } from '../src/EventUtils';
 import { KeyValueService } from '../src/keyvalue';
-import { TestKeyValueService } from '../src/keyvalue.test_service';
 import { PersonProfileEvent, Sex } from '../src/schema';
+import { TestEventService, TestKeyValueService } from '../src/test.service';
 
 describe('ApiController (e2e)', () => {
   let app;

@@ -3,11 +3,10 @@ import { Test } from '@nestjs/testing';
 import { ApiController } from './api.controller';
 import { ApiModule } from './api.module';
 import { EventService } from './event';
-import { TestEventService } from './event.test_service';
 import { freshEventInfo, freshId } from './EventUtils';
 import { KeyValueService } from './keyvalue';
-import { TestKeyValueService } from './keyvalue.test_service';
 import { ExperimentalEventInfo, PersonSymptomsEvent } from './schema';
+import { TestEventService, TestKeyValueService } from './test.service';
 
 describe('ApiControllerController', () => {
   let apiController: ApiController
