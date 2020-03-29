@@ -4,25 +4,26 @@ import { APIGatewayProxyHandler } from 'aws-lambda';
 import * as awsServerlessExpress from 'aws-serverless-express';
 import * as express from 'express';
 import { Server } from 'http';
-import { AppModule } from './app.module';
 
-let cachedServer: Server;
+import { ApiModule } from './api.module';
+
+let cachedServer: Server
 
 const bootstrapServer = async (): Promise<Server> => {
-  const expressApp = express();
-  const adapter = new ExpressAdapter(expressApp);
-  const app = await NestFactory.create(AppModule, adapter);
-  app.enableCors();
-  await app.init();
-  return awsServerlessExpress.createServer(expressApp);
+  const expressApp = express()
+  const adapter = new ExpressAdapter(expressApp)
+  const app = await NestFactory.create(ApiModule, adapter)
+  app.enableCors()
+  await app.init()
+  return awsServerlessExpress.createServer(expressApp)
 }
 
 export const handler: APIGatewayProxyHandler = async (event, context) => {
   if (!cachedServer) {
-    const server = await bootstrapServer();
-    cachedServer = server;
-    return awsServerlessExpress.proxy(server, event, context, 'PROMISE').promise;
+    const server = await bootstrapServer()
+    cachedServer = server
+    return awsServerlessExpress.proxy(server, event, context, 'PROMISE').promise
   } else {
-    return awsServerlessExpress.proxy(cachedServer, event, context, 'PROMISE').promise;
+    return awsServerlessExpress.proxy(cachedServer, event, context, 'PROMISE').promise
   }
-};
+}

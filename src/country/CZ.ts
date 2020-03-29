@@ -10,7 +10,7 @@ export default class CZApi implements CountryApi {
           <h1>DEMO!!! prozatím nesmysly, v žádném případě nasledující řádky neberte vážně...</h1>
           <p style="font-size: 40;">Horečka je častým symptomem onemocnění Covid-19.</p>
           <p style="font-size: 20;">Prosím izolujte se od ostatních lidí jak je to jen možné.</p>
-          <a style="font-size: 40;" href="$externalLink">Jděte do nejbližší laboratoře!</a>
+          <a style="font-size: 40;" href="$externalLink">Jděte prosím do nejbližší laboratoře!</a>
         `,
         externalLink,
         externalLinkTitle: 'Jděte do laboratoře!',

@@ -8,6 +8,10 @@ import { FirehoseService } from './firehose.service';
 @Module({
   imports: [],
   controllers: [ApiController],
-  providers: [CountryService, DynamoDbService, FirehoseService],
+  providers: [
+    CountryService,
+    { provide: 'EventService', useClass: DynamoDbService },
+    { provide: 'KeyValueService', useClass: FirehoseService },
+  ],
 })
-export class AppModule {}
+export class ApiModule {}
