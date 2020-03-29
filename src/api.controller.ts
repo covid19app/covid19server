@@ -1,7 +1,9 @@
 import { Body, Controller, Get, Inject, Param, Post } from '@nestjs/common';
+
 import { CountryService } from './country.service';
 import { EventService } from './event';
 import { KeyValueService } from './keyvalue';
+import { NotificationService } from './notification.service';
 import { DeviceEntity, DeviceNotificationEvent, ExperimentalEventInfo, LabResult, NextSteps,
   PersonEntity, PersonProfileEvent, PersonSymptomsEvent, PersonTravelHistoryEvent,
   RegistrationStatus, TestEntity, TestPairEvent, TestResultEvent } from './schema';
@@ -12,6 +14,7 @@ export class ApiController {
     private readonly countryService: CountryService,
     @Inject('EventService') private readonly eventService: EventService,
     @Inject('KeyValueService') private readonly keyValueService: KeyValueService,
+    private readonly notificationService: NotificationService,
   ) {}
 
   @Get('/v1/device/:deviceId')
@@ -97,6 +100,7 @@ export class ApiController {
       this.keyValueService.put('test_entity', updatedTestEntity.testId, updatedTestEntity),
       // TODO: publish every event even on any errors
       this.eventService.publish('test_result_event', testResultEvent),
+      this.notificationService.pushTestResultHack(testResultEvent),
     ])
     return '"OK"'
   }
