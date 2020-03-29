@@ -79,11 +79,12 @@ export class ApiController {
   @Post('/v1/test/:testId/pair')
   async postTestPair(@Param('testId') testId: string,
       @Body() testPairEvent: TestPairEvent): Promise<string> {
+    const publishEventPromise = this.eventService.publish('test_pair_event', testPairEvent)
     const testEntity = await this.keyValueService.get<TestEntity>('test_entity', testId)
     const updatedTestEntity: TestEntity = {...testEntity, ...testPairEvent, labResult: LabResult.IN_PROGRESS}
     await Promise.all([
       this.keyValueService.put('test_entity', updatedTestEntity.testId, updatedTestEntity),
-      this.eventService.publish('test_pair_event', testPairEvent)
+      publishEventPromise,
     ])
     return '"OK"'
   }
@@ -91,6 +92,7 @@ export class ApiController {
   @Post('/v1/test/:testId/result')
   async postTestResult(@Param('testId') testId: string,
       @Body() testResultEvent: TestResultEvent): Promise<string> {
+    const publishEventPromise = this.eventService.publish('test_result_event', testResultEvent)
     const testEntity = await this.keyValueService.get<TestEntity>('test_entity', testId)
     if (!testEntity) {
       return '"ERROR: testId = $testId not is not paired yet. Please scan again."'
@@ -98,8 +100,7 @@ export class ApiController {
     const updatedTestEntity: TestEntity = {...testEntity, ...testResultEvent}
     await Promise.all([
       this.keyValueService.put('test_entity', updatedTestEntity.testId, updatedTestEntity),
-      // TODO: publish every event even on any errors
-      this.eventService.publish('test_result_event', testResultEvent),
+      publishEventPromise,
       this.notificationService.pushTestResultHack(testResultEvent),
     ])
     return '"OK"'
