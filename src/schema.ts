@@ -25,8 +25,7 @@ export enum Action {
 export type ActionStrings = keyof typeof Action
 
 export interface NextSteps {
-  // action: Action
-  // action: string
+  action?: Action
   text?: string
   html?: string
   externalLink?: string
