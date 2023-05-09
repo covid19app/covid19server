@@ -23,7 +23,7 @@
     "@nestjs/common": "^7.0.5",
     "@nestjs/core": "^7.0.5",
     "@nestjs/platform-express": "^7.0.5",
-    "aws-sdk": "^2.643.0",
+    "aws-sdk": "^2.1374.0",
     "aws-serverless-express": "^3.3.6",
     "expo-server-sdk": "^3.4.0",
     "express": "^4.17.1",
